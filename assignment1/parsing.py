@@ -2,8 +2,6 @@ import re
 import os
 import zipfile
 
-import array
-
 # Regular expressions to extract data from the corpus
 doc_regex = re.compile("<DOC>.*?</DOC>", re.DOTALL)
 docno_regex = re.compile("<DOCNO>.*?</DOCNO>")
@@ -30,27 +28,30 @@ for file in allfiles:
                       .replace("<TEXT>", "").replace("</TEXT>", "")\
                       .replace("\n", " ")
 
-            # step 1 - lower-case words, remove punctuation, remove stop-words, etc. 
+ #-------------------------- step 1 - lower-case words, remove punctuation, remove stop-words, etc. --------------------------# 
 
-            pattern = re.compile('\w+(\.?[\w\'-]+)*') # use our regex (updated to handle ' and -)
+            pattern = re.compile('[\.?\w\'-]+') # use our regex (updated to handle ' and -)
 
             lwr_case = text.lower() # lower-case our words
 
-            #sample_string = "bob, Bob, BOB, 376, 98.6, 192.160.0.1, test's, another-test"
-            #lwr_sample = sample_string.lower()
-
-            matches = pattern.finditer(lwr_case)
-            #matches = pattern.finditer(lwr_sample)
-
-            new_array = []
-
-            for match in matches:
-                if (new_array.count(match) < 1):
-                    new_array.append(match)
-     
-            print(new_array)
-
+            tokens = [] 
+            tokens = pattern.findall(lwr_case) # tokenize words and put into list
+            #print(tokens)
             
-            # step 2 - create tokens 
-            # step 3 - build index
-            
+            tmp = []
+            stopwords_list = []
+            remove_newline = re.compile('[\r\n]+')
+            with open('stopwords.txt', 'r') as stopwords:
+                for line in stopwords:
+                    tmp.append(line)
+                    #print(line)
+
+            stopwords_list = remove_newline.findall(tmp)
+            print(stopwords_list)
+
+            for line in stopwords_list:
+                while line in tokens: tokens.remove(line)
+            #print(tokens)
+
+#-------------------------- step 2 - create tokens --------------------------# 
+#-------------------------- step 3 - build index --------------------------#
